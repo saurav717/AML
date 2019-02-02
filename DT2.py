@@ -4,6 +4,7 @@
 import csv
 import numpy as np
 import operator
+import timeit
 #import pandas
 # Enter You Name Here
 myname = "Saurav-vara-prasad-Channuri-" # or "Doe-Jane-"
@@ -28,10 +29,9 @@ def parent_entropy(dataset):
     return entrpy 
    
 def entropy(dataset, output_vector):
+
     zeros_and_ones = 1*dataset
 
-    # print len(dataset)
-    
     total_data_size = len(dataset.T[0])
 
     child_count = zeros_and_ones.sum(axis = 0)
@@ -50,14 +50,14 @@ def entropy(dataset, output_vector):
     count_first_child_zeros = child_count - count_first_child_ones
     
     # count_second_child = len(dataset) - child_count 
-    # count_second_child_ones = 
+    # # count_second_child_ones = 
 
     
-    print "child_count = ", child_count
-    print "count_child_zeros = ", count_first_child_zeros
-    print "count_child_ones = ", count_first_child_ones
+    # print "child_count = ", child_count
+    # print "count_child_zeros = ", count_first_child_zeros
+    # print "count_child_ones = ", count_first_child_ones
 
-    # child_count = np.array(child_count,dtype = np.float)
+    # # child_count = np.array(child_count,dtype = np.float)
     # count_child_ones = np.array(count_child_ones,dtype = np.float)
     # count_child_zeros = np.array(count_child_zeros,dtype = np.float)
 
@@ -79,7 +79,7 @@ def entropy(dataset, output_vector):
     entrpy = first_ones_entropy + first_zeros_entropy
     weight = ((child_count)/float(len(dataset)))
     weighted_entropy = weight*entrpy
-    print "weighted entropy = ", np.array(weight).astype(float)* np.array(weighted_entropy).astype(float)
+    # print "weighted entropy = ", np.array(weight).astype(float)* np.array(weighted_entropy).astype(float)
     # print "entropy = ", entrpy
     return weighted_entropy
 
@@ -97,6 +97,7 @@ def information_gain(training_set):
     best_information_gain = np.zeros(11)
 
     icount = 0
+    start = timeit.default_timer()
     for element in range(0,len(training_set)):
         print "\n\n\t\t\t\t\t\t\t\t\t\t\t*****************************************************************************\t*****iterator******\t\t" , icount
         icount+=1
@@ -106,8 +107,6 @@ def information_gain(training_set):
         right_children_matrix = training_set > threshold
         left_children_matrix = training_set <= threshold 
 
-
-
         right_child_count = right_children_matrix.sum(axis = 0)
         right_child_count = np.delete(right_child_count,11 ,0)
 
@@ -115,11 +114,11 @@ def information_gain(training_set):
         left_child_count = np.delete(left_child_count,11 ,0)
 
 
-        print "left child count = ", left_child_count
-        print "right child count = ", right_child_count
-        print
-        print
-        print "parent entropy = ", parent_entropy_val
+        # print "left child count = ", left_child_count
+        # print "right child count = ", right_child_count
+        # print
+        # print
+        # print "parent entropy = ", parent_entropy_val
 
         # print "training_set = ", training_set
         # print "right_children_mat"
@@ -134,11 +133,11 @@ def information_gain(training_set):
         information_gained = parent_entropy_val - (weighted_entropy_left + weighted_entropy_right)
 
         bool_info_gain = ( best_information_gain < information_gained)
-        print "bool = ", bool_info_gain
+        # print "bool = ", bool_info_gain
 
-        print "information gained = ", information_gained
-        print "old information    = ", best_information_gain
-        print "*********************************************************************************************************"
+        # print "information gained = ", information_gained
+        # print "old information    = ", best_information_gain
+        # print "*********************************************************************************************************"
 
         best_information_gain = best_information_gain * ~bool_info_gain + information_gained * bool_info_gain
 
@@ -154,8 +153,8 @@ def information_gain(training_set):
 
     print "best threshold = ", best_threshold
     print "best information gain = ", best_information_gain
-
-        
+    stop = timeit.default_timer()
+    print "time taken = ", stop - start 
         # print "right child matrix = ", right_children_matrix
         # print "left child matrix = ", left_children_matrix
 
