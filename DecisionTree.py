@@ -131,10 +131,10 @@ class DecisionTree():
         attribute = 0
         threshold_array = np.unique(training_set.T[attribute])
 
-        for element in range(0,1):
+        for element in range(0,len(threshold_array)):
         
                 #attribute = 0
-            threshold = training_set[89][0]
+            threshold = training_set[element][attribute]
             knowledge_gained = information_gain(training_set, attribute, threshold)
                  
             

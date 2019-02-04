@@ -28,34 +28,48 @@ def parent_entropy(dataset):
 
     return entrpy 
    
-def entropy(dataset, output_vector):
+def entropy(dataset, output_vector, threshold):
+
+
+    # threshold = np.array(threshold).astype(float)
+    # threshold = np.delete(threshold,11,0)
+        
+    #print "dataset = ", len(dataset)
 
     zeros_and_ones = 1*dataset
-
     total_data_size = len(dataset.T[0])
 
+    total_ones = np.sum(np.array(output_vector).astype(float), axis = 0)
+    #print "total_ones = ", total_ones
+    total_zeros = len(dataset) - total_ones
+
     child_count = zeros_and_ones.sum(axis = 0)
-    child_count = np.delete(child_count,11 ,0)
+    #child_count = np.delete(child_count,11 ,0)
 
     #print zeros_and_ones                              # zeros and ones === rows * columns
     
     zeros_and_ones = zeros_and_ones.T
-    output_vector = np.asarray(output_vector)
+    # output_vector = np.asarray(output_vector)
 
     ones = np.array(output_vector).astype(float)*np.array(zeros_and_ones).astype(float)
     count_first_child_ones = np.sum(ones.T[:],axis = 0)
 
 
-    count_first_child_ones = np.delete(count_first_child_ones,11,0)
+    #count_first_child_ones = np.delete(count_first_child_ones,11,0)
     count_first_child_zeros = child_count - count_first_child_ones
     
+    count_second_child_ones = total_ones - count_first_child_ones
+    count_second_child_zeros = total_zeros - count_first_child_zeros
+
+    second_child_count = count_second_child_ones + count_second_child_zeros
+
     # count_second_child = len(dataset) - child_count 
     # # count_second_child_ones = 
 
     
-    # print "child_count = ", child_count
-    # print "count_child_zeros = ", count_first_child_zeros
-    # print "count_child_ones = ", count_first_child_ones
+    print "child_count = ", child_count
+    print "count_child_zeros = ", count_first_child_zeros
+    print "count_child_ones = ", count_first_child_ones
 
     # # child_count = np.array(child_count,dtype = np.float)
     # count_child_ones = np.array(count_child_ones,dtype = np.float)
@@ -71,24 +85,31 @@ def entropy(dataset, output_vector):
 
     ones_entropy = -(count_first_child_ones/child_count) * np.log2(count_first_child_ones/child_count)
     zeros_entropy = -(count_first_child_zeros/child_count)*np.log2(count_first_child_zeros/child_count)
+
+    second_ones_entropy = -(count_second_child_ones/second_child_count) * np.log2(count_second_child_ones/second_child_count)
+    second_zeros_entropy = -(count_second_child_zeros/second_child_count) * np.log2(count_second_child_zeros/second_child_count)
  
     
     first_ones_entropy = np.nan_to_num(ones_entropy)
     first_zeros_entropy = np.nan_to_num(zeros_entropy)
 
-    entrpy = first_ones_entropy + first_zeros_entropy
+    second_ones_entropy = np.nan_to_num(second_ones_entropy)
+    second_zeros_entropy = np.nan_to_num(second_zeros_entropy)
+
+    entrpy_one = first_ones_entropy + first_zeros_entropy
+    entrpy_second = second_ones_entropy + second_zeros_entropy
     weight = ((child_count)/float(len(dataset)))
-    weighted_entropy = weight*entrpy
+    weight_second = ((second_child_count)/float(len(dataset)))
+
+    weighted_entropy = weight*entrpy_one  + weight_second*entrpy_second
     # print "weighted entropy = ", np.array(weight).astype(float)* np.array(weighted_entropy).astype(float)
     # print "entropy = ", entrpy
     return weighted_entropy
 
-
-
 def information_gain(training_set):
 
-    information_gain = np.zeros(11)
-    thresholds = np.zeros(11)
+    information_gain = np.zeros(12)
+    thresholds = np.zeros(12)
 
     parent_entropy_val = parent_entropy(training_set)
 
@@ -104,14 +125,17 @@ def information_gain(training_set):
         threshold_array_index = element    
         threshold = training_set[threshold_array_index]
 
-        right_children_matrix = training_set > threshold
-        left_children_matrix = training_set <= threshold 
+        dataset = np.array(training_set).astype(float) > np.array(threshold).astype(float) 
+        entropy_children = entropy(dataset,output_vector, threshold)
 
-        right_child_count = right_children_matrix.sum(axis = 0)
-        right_child_count = np.delete(right_child_count,11 ,0)
+        # right_children_matrix = training_set > threshold
+        # left_children_matrix = training_set <= threshold 
 
-        left_child_count = left_children_matrix.sum(axis = 0)
-        left_child_count = np.delete(left_child_count,11 ,0)
+        # right_child_count = right_children_matrix.sum(axis = 0)
+        # right_child_count = np.delete(right_child_count,11 ,0)
+
+        # left_child_count = left_children_matrix.sum(axis = 0)
+        # left_child_count = np.delete(left_child_count,11 ,0)
 
 
         # print "left child count = ", left_child_count
@@ -124,15 +148,18 @@ def information_gain(training_set):
         # print "right_children_mat"
         threshold = np.array(threshold).astype(float)
         threshold = np.delete(threshold,11,0)
-        weighted_entropy_right = entropy(right_children_matrix, output_vector)
-        weighted_entropy_left =  entropy(left_children_matrix, output_vector)
+        # weighted_entropy_right = entropy(right_children_matrix, output_vector)
+        # weighted_entropy_left =  entropy(left_children_matrix, output_vector)
 
         # print "left_child_entropy = ", left_child_entropy
         # print "right_child_entropy = ", right_child_entropy
 
-        information_gained = parent_entropy_val - (weighted_entropy_left + weighted_entropy_right)
+        information_gained = parent_entropy_val - (entropy_children)
 
-        bool_info_gain = ( best_information_gain < information_gained)
+        information_gained = np.array(information_gained).astype(float)
+        information_gained = np.delete(information_gained,11,0)
+
+        bool_info_gain = ( np.array(best_information_gain).astype(float) < np.array(information_gained).astype(float))
         # print "bool = ", bool_info_gain
 
         # print "information gained = ", information_gained
@@ -148,8 +175,8 @@ def information_gain(training_set):
         # best_threshold = np.array(best_threshold).astype(float)* ~np.array(bool_info_gain).astype(float) + np.array(threshold).astype(float)* np.array(bool_info_gain).astype(float)
        
         print "bth : " , best_threshold
-        # threshold = best_threshold
-        # information_gained = best_information_gain
+        threshold = best_threshold
+        information_gained = best_information_gain
 
     print "best threshold = ", best_threshold
     print "best information gain = ", best_information_gain
