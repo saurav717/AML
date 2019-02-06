@@ -1,0 +1,29 @@
+QUESTION - 3
+
+part a)
+ 
+            compile using command - python DecisionTree_A
+
+
+
+
+part b)
+
+  	    compile using command - python DecisionTree_B_10
+	
+
+
+	    DecisionTree_B has 10 dataset divisions for cross validation
+		
+	    DecisionTree_B_15  has 15 dataset divisions for cross validation
+
+    	    DecisionTree_B_20  has 20 dataset divisions for cross validation
+
+	    DecisionTree_B_30  has 30 dataset divisions for cross validation
+
+ 	
+	    There was an increase in average accuracy as the dataset divisions increased
+	    
+	    increase is not so high, accuracy increase has precision of 0.005
+
+		
